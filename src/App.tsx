@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import MovieList from './components/MovieList';
-import MovieDetails from './components/MovieDetails';
+import MovieDetails from './components/movieDetails';
 
 interface Movie {
   id: string | number;
@@ -44,7 +44,7 @@ function App() {
   if (selectedMovieId !== null) {
     return (
       <MovieDetails
-        movieId={selectedMovieId}
+        movieId ={selectedMovieId}
         onBack={() => setSelectedMovieId(null)}
       />
     );
