@@ -9,13 +9,18 @@ interface Movie {
 
 interface MovieListProps {
   movies: Movie[];
+  onMovieClick: (id: string | number) => void;
 }
 
-function MovieList({ movies }: MovieListProps) {
+function MovieList({ movies, onMovieClick }: MovieListProps) {
   return (
     <div>
       {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
+        <MovieCard
+          key={movie.id}
+          movie={movie}
+          onClick={onMovieClick}
+        />
       ))}
     </div>
   );

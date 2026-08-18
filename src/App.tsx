@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import MovieList from './components/MovieList';
+import MovieDetails from './components/MovieDetails';
 
 interface Movie {
   id: string | number;
@@ -11,6 +12,9 @@ interface Movie {
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [selectedMovieId, setSelectedMovieId] = useState<
+    string | number | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,6 +41,15 @@ function App() {
       });
   }, []);
 
+  if (selectedMovieId !== null) {
+    return (
+      <MovieDetails
+        movieId={selectedMovieId}
+        onBack={() => setSelectedMovieId(null)}
+      />
+    );
+  }
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -52,7 +65,11 @@ function App() {
   return (
     <div>
       <h1>Movies</h1>
-      <MovieList movies={movies} />
+
+      <MovieList
+        movies={movies}
+        onMovieClick={(id) => setSelectedMovieId(id)}
+      />
     </div>
   );
 }

@@ -7,11 +7,12 @@ interface Movie {
 
 interface MovieCardProps {
   movie: Movie;
+  onClick: (id: string | number) => void;
 }
 
-function MovieCard({ movie }: MovieCardProps) {
+function MovieCard({ movie, onClick }: MovieCardProps) {
   return (
-    <div>
+    <div onClick={() => onClick(movie.id)}>
       <img src={movie.posterUrl} alt={movie.title} width="150" />
       <h2>{movie.title}</h2>
       <p>{movie.releaseYear}</p>
