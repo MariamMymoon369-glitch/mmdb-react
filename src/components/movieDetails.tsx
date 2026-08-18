@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 
 interface Movie {
   id: string | number;
@@ -10,7 +11,7 @@ interface Movie {
 }
 
 interface MovieDetailsProps {
-  movieId: string | number;
+  movieId: string | number | null;
   onBack: () => void;
 }
 
@@ -18,8 +19,15 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const { id } = useParams<{ id: string }>();
   useEffect(() => {
+    if (movieId === null) {
+      setMovie(null);
+      setLoading(false);
+      setError('No movie selected.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -82,6 +90,9 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
       </p>
 
       <p>{movie.overview}</p>
+      
+      <p>Movie ID: {movie.id}</p>
+
     </div>
   );
 }

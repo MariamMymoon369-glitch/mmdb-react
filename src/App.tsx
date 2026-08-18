@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/movieDetails';
+import { Routes, Route } from 'react-router';
 
 interface Movie {
   id: string | number;
@@ -44,7 +45,7 @@ function App() {
   if (selectedMovieId !== null) {
     return (
       <MovieDetails
-        movieId ={selectedMovieId}
+        movieId={selectedMovieId}
         onBack={() => setSelectedMovieId(null)}
       />
     );
@@ -70,6 +71,12 @@ function App() {
         movies={movies}
         onMovieClick={(id) => setSelectedMovieId(id)}
       />
+
+      <Routes>
+         <Route path="/" element={<MovieList movies={movies} onMovieClick={(id) => setSelectedMovieId(id)} />} />
+         <Route path="/movies/:id" element={<MovieDetails movieId={selectedMovieId} onBack={() => setSelectedMovieId(null)} />} />
+       </Routes>
+
     </div>
   );
 }
