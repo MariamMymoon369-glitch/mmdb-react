@@ -75,7 +75,7 @@ function MovieDetails() {
 
   return (
     <div>
-      <button onClick={() => navigate('/')}>← Back</button>
+      <button onClick={() => navigate('/movies/')}>← Back</button>
 
       <img src={movie.posterUrl} alt={movie.title} width="300" />
 
