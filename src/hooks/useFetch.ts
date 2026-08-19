@@ -12,7 +12,13 @@ function useFetch<T>(url: string) {
     fetch(url)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Failed to fetch');
+          if (response.status >= 500) {
+            throw new Error(
+              'The server encountered an error. Please try again later.'
+            );
+          }
+
+          throw new Error(`Request failed with status ${response.status}`);
         }
 
         return response.json();
@@ -20,8 +26,14 @@ function useFetch<T>(url: string) {
       .then((result: T) => {
         setData(result);
       })
-      .catch(() => {
-        setError('Could not load data. Please try again.');
+      .catch((error: Error) => {
+        if (error.message.includes('Failed to fetch')) {
+          setError(
+            'Cannot connect to the API. Please make sure the server is running.'
+          );
+        } else {
+          setError(error.message);
+        }
       })
       .finally(() => {
         setLoading(false);
