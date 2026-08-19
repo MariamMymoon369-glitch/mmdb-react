@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 interface Movie {
-  id: string | number;
+  id: string | number | null;
   posterUrl: string;
   title: string;
   releaseYear: number;
@@ -10,18 +10,16 @@ interface Movie {
   overview: string;
 }
 
-interface MovieDetailsProps {
-  movieId: string | number | null;
-  onBack: () => void;
-}
-
-function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
+function MovieDetails() {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (movieId === null) {
+    if (!id) {
       setMovie(null);
       setLoading(false);
       setError('No movie selected.');
@@ -31,7 +29,7 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
     setLoading(true);
     setError(null);
 
-    fetch(`http://localhost:3000/movies/${movieId}`)
+    fetch(`http://localhost:3000/movies/${id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch movie');
@@ -48,7 +46,7 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
       .finally(() => {
         setLoading(false);
       });
-  }, [movieId]);
+  }, [id]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -57,7 +55,7 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
   if (error) {
     return (
       <div>
-        <button onClick={onBack}>← Back</button>
+        <button onClick={() => navigate('/movies/')}>← Back</button>
         <p>{error}</p>
       </div>
     );
@@ -66,7 +64,7 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
   if (!movie) {
     return (
       <div>
-        <button onClick={onBack}>← Back</button>
+        <button onClick={() => navigate('/movies/')}>← Back</button>
         <p>Movie not found.</p>
       </div>
     );
@@ -77,7 +75,7 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
 
   return (
     <div>
-      <button onClick={onBack}>← Back</button>
+      <button onClick={() => navigate('/')}>← Back</button>
 
       <img src={movie.posterUrl} alt={movie.title} width="300" />
 
@@ -90,9 +88,8 @@ function MovieDetails({ movieId, onBack }: MovieDetailsProps) {
       </p>
 
       <p>{movie.overview}</p>
-      
-      <p>Movie ID: {movie.id}</p>
 
+      <p>Movie ID: {movie.id}</p>
     </div>
   );
 }

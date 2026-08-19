@@ -1,4 +1,5 @@
 import MovieCard from './MovieCard';
+import { useNavigate } from 'react-router';
 
 interface Movie {
   id: string | number;
@@ -9,17 +10,22 @@ interface Movie {
 
 interface MovieListProps {
   movies: Movie[];
-  onMovieClick: (id: string | number) => void;
 }
 
-function MovieList({ movies, onMovieClick }: MovieListProps) {
+function MovieList({ movies }: MovieListProps) {
+  const navigate = useNavigate();
+
+  const handleMovieClick = (id: string | number) => {
+    navigate(`/movies/${id}`);
+  };
+
   return (
     <div>
       {movies.map((movie) => (
         <MovieCard
           key={movie.id}
           movie={movie}
-          onClick={onMovieClick}
+          onClick={handleMovieClick}
         />
       ))}
     </div>

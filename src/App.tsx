@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import './App.css';
+import useFetch from './hooks/useFetch';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/movieDetails';
 import { Routes, Route } from 'react-router';
@@ -12,44 +12,11 @@ interface Movie {
 }
 
 function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [selectedMovieId, setSelectedMovieId] = useState<
-    string | number | null
-  >(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, loading, error } = useFetch<Movie[]>(
+    'http://localhost:3000/movies'
+  );
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    fetch('http://localhost:3000/movies')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch movies');
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        setMovies(data);
-      })
-      .catch(() => {
-        setError('Could not load movies. Please try again.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  if (selectedMovieId !== null) {
-    return (
-      <MovieDetails
-        movieId={selectedMovieId}
-        onBack={() => setSelectedMovieId(null)}
-      />
-    );
-  }
+  const movies = data ?? [];
 
   if (loading) {
     return <div>Loading...</div>;
@@ -65,18 +32,12 @@ function App() {
 
   return (
     <div>
-      <h1>Movies</h1>
-
-      <MovieList
-        movies={movies}
-        onMovieClick={(id) => setSelectedMovieId(id)}
-      />
-
       <Routes>
-         <Route path="/" element={<MovieList movies={movies} onMovieClick={(id) => setSelectedMovieId(id)} />} />
-         <Route path="/movies/:id" element={<MovieDetails movieId={selectedMovieId} onBack={() => setSelectedMovieId(null)} />} />
-       </Routes>
+        <Route path="/" element={<MovieList movies={movies} />} />
+        <Route path="/movies/:id" element={<MovieDetails />} />
+        <Route path="/movies/" element={<MovieList movies={movies} />} />
 
+      </Routes>
     </div>
   );
 }
