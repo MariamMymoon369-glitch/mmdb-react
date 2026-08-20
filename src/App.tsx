@@ -13,8 +13,10 @@ interface Movie {
 }
 
 function App() {
+  const [page, setPage] = useState(1);
+  const limit = 10;
   const { data, loading, error } = useFetch<Movie[]>(
-    'http://localhost:3000/movies/'
+    `http://localhost:3000/movies?page=${page}&limit=${limit}`
   );
 
   const movies = data ?? [];
@@ -69,6 +71,7 @@ function App() {
 
       </Routes>
 
+        <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
 
     </div>
   );
