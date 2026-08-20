@@ -3,7 +3,7 @@ import './App.css';
 import useFetch from './hooks/useFetch';
 import MovieList from './components/MovieList';
 import MovieDetails from './components/movieDetails';
-import { Routes, Route } from 'react-router';
+import { Route, Routes, useSearchParams } from 'react-router';
 
 interface Movie {
   id: string | number;
@@ -21,7 +21,8 @@ function App() {
 
   const movies = data ?? [];
 
-  const [search, setSearch] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get('search') ?? '';
 
   const filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(search.toLowerCase())
@@ -52,7 +53,10 @@ function App() {
                 type="text"
                 placeholder="Search movies..."
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setSearchParams(value ? { search: value } : {});
+                }}
               />
 
               {filteredMovies.length === 0 ? (
