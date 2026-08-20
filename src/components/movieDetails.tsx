@@ -6,9 +6,9 @@ interface Movie {
   posterUrl: string;
   title: string;
   releaseYear: number;
-  runtimeMinutes: number;
-  overview: string;
-  language: string;
+  runtimeMinutes: number | null;
+  overview: string | null;
+  language: string | null;
 }
 
 function MovieDetails() {
@@ -45,8 +45,11 @@ function MovieDetails() {
     );
   }
 
-  const hours = Math.floor(movie.runtimeMinutes / 60);
-  const minutes = movie.runtimeMinutes % 60;
+  const runtime = movie.runtimeMinutes;
+  const runtimeDisplay =
+    runtime === null
+      ? 'Runtime unavailable'
+      : `${Math.floor(runtime / 60)}h ${runtime % 60}m`;
 
   return (
     <div>
@@ -62,9 +65,7 @@ function MovieDetails() {
 
       <p>{movie.releaseYear}</p>
 
-      <p>
-        {hours}h {minutes}m
-      </p>
+      <p>{runtimeDisplay}</p>
 
       <p>{movie.overview}</p>
 
