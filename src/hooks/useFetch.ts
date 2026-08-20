@@ -6,19 +6,17 @@ function useFetch<T>(url: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     setLoading(true);
     setError(null);
 
-    fetch(url)
+    fetch(url, {
+      signal: controller.signal,
+    })
       .then((response) => {
         if (!response.ok) {
-          if (response.status >= 500) {
-            throw new Error(
-              'The server encountered an error. Please try again later.'
-            );
-          }
-
-          throw new Error(`Request failed with status ${response.status}`);
+          throw new Error('Failed to fetch');
         }
 
         return response.json();
@@ -26,18 +24,22 @@ function useFetch<T>(url: string) {
       .then((result: T) => {
         setData(result);
       })
-      .catch((error: Error) => {
-        if (error.message.includes('Failed to fetch')) {
-          setError(
-            'Cannot connect to the API. Please make sure the server is running.'
-          );
-        } else {
-          setError(error.message);
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          return;
         }
+
+        setError('Could not load data. Please try again.');
       })
       .finally(() => {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       });
+
+    return () => {
+      controller.abort();
+    };
   }, [url]);
 
   return { data, loading, error };
